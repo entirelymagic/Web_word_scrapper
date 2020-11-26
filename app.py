@@ -1,5 +1,6 @@
 from parsers.all_content_of_a_page import WebPage
 from database.database_manipulation import *
+from robot.robot import RobotFileChecker
 
 
 DB_PROJECT_NAME = 'Enter a name for your Database: '
@@ -69,17 +70,9 @@ if __name__ == "__main__" and running:
     create_table_webpages_if_not_exist(DB_PROJECT_NAME)
     create_table_keywords_if_not_exist(DB_PROJECT_NAME)
     search_if_db_empty(DB_PROJECT_NAME)
-    promped_url = prompt_user_url()
-    current_page = WebPage('https://books.toscrape.com/') # TODO 02. replace url with promped_url
+    promped_url = 'https://books.toscrape.com/'  # prompt_user_url()
+    current_page = WebPage(promped_url)  # TODO 02. replace url with prompt_url
     url_title = WebPage.grab_title
-    print(f'Page title is: {url_title}')
-    output = get_text_count_and_significance(soup)
-    print(f'Total number of words from website= {output[1]}')
-    print(f'Total number of unique words from website= {output[2]}')
-    print(output[0])
-    most_significant5words = sorted(output[0],key=lambda x:x[2], reverse=True)
-    print(f'Most significant 5 words from website= {[w[0] for w in most_significant5words[0:5]]}')
-    add_to_webpages(DB_PROJECT_NAME, promped_url, url_title)
-    # add_to_keywords()
-
+    roboCheck = RobotFileChecker(promped_url)
+    print(roboCheck.check_fetch_page)
 

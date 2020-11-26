@@ -28,6 +28,7 @@ def create_table_keywords_if_not_exist(db):
 
 
 def add_to_keywords(db, page_id, word, count, significance):
+    """add to table kewords having in"""
     with DatabaseConnections(f"{db}.db") as connection:
         cursor = connection.cursor()
 
