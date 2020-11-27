@@ -33,8 +33,3 @@ class TestFunction(TestCase):
     def test_database_removal(self):
         self.assertIsNone(delete_database('test_db'))
 
-import re
-url = 'https://pydeep.com/python-string'
-result = re.sub(r'(.*://)?([^/?]+).*', '\g<1>\g<2>', url)
-print("Original: ", url)
-print("Extracted: ", result)
