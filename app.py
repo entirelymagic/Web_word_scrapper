@@ -27,13 +27,17 @@ def prompt_user_name():
 def prompt_user_url():
     global ASK_URL, DB_PROJECT_NAME
     url = input(ASK_URL)
-    page = WebPage(url)
-    try:
-        add_to_webpages(DB_PROJECT_NAME, url, page.grab_title)
-        for word, count, significance in page.words_count_significance:
-            add_to_keywords(DB_PROJECT_NAME, 1, word, count, significance)
-    except AttributeError:
-        print("You have to enter a valid website url!")
+    checker = RobotFileChecker(url)
+    if checker.check_fetch_page:
+        page = WebPage(url)
+        try:
+            add_to_webpages(DB_PROJECT_NAME, url, page.grab_title)
+            for word, count, significance in page.words_count_significance:
+                add_to_keywords(DB_PROJECT_NAME, 1, word, count, significance)
+        except AttributeError:
+            print("You have to enter a valid website url!")
+    else:
+        print("Website not allowed to scrape")
 
 
 def program_objectives():
