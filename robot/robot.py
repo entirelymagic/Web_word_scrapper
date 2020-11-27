@@ -1,4 +1,5 @@
 import urllib.robotparser
+import re
 
 
 class RobotFileChecker:
@@ -7,10 +8,11 @@ class RobotFileChecker:
     def __init__(self, page):
         self.page = page
         self.rp = urllib.robotparser.RobotFileParser()
-        if self.page[-1] == '/':
-            self.rp.set_url(self.page + "robots.txt")
-        else:
-            self.rp.set_url(self.page + "/robots.txt")
+
+        url = self.page
+        result = re.sub(r'(.*://)?([^/?]+).*', '\g<1>\g<2>', url)
+        self.rp.set_url(result + r"/robots.txt")
+
         self.rp.read()
 
     @property

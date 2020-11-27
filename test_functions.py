@@ -25,3 +25,16 @@ class TestFunction(TestCase):
     def test_robot_tester(self):
         test_url = 'https://books.toscrape.com/'
         self.assertTrue(RobotFileChecker(test_url).check_fetch_page)
+
+    def test_drop_table(self):
+        self.assertIsNone(drop_table('test_db', 'keywords'))
+        self.assertIsNone(drop_table('test_db', 'webpages'))
+
+    def test_database_removal(self):
+        self.assertIsNone(delete_database('test_db'))
+
+import re
+url = 'https://pydeep.com/python-string'
+result = re.sub(r'(.*://)?([^/?]+).*', '\g<1>\g<2>', url)
+print("Original: ", url)
+print("Extracted: ", result)

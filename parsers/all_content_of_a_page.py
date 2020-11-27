@@ -72,7 +72,8 @@ class WebPage:
         # will return a list of tuples, each tuple is the word, number of appearances and significance
         return _significance
 
-    def _words_count_significance(self):
+    @property
+    def words_count_significance(self):
         words_count_and_significance = [
             i for i in zip(
                 [a[0] for a in self.most_common_words],

@@ -1,4 +1,5 @@
 from database.databaseConnection import DatabaseConnections
+import os
 
 
 def create_table_webpages_if_not_exist(db):
@@ -17,10 +18,11 @@ def create_table_keywords_if_not_exist(db):
     with DatabaseConnections(f"{db}.db") as connection:
         cursor = connection.cursor()
         sql = "CREATE TABLE IF NOT EXISTS keywords(" \
-              "page_id integer primary key NOT NULL ," \
+              "page_id integer NOT NULL ," \
               "word text NOT NULL," \
               "count integer NOT NULL," \
               "significance integer NOT NULL," \
+              "PRIMARY KEY (page_id, word)" \
               "FOREIGN KEY (page_id) " \
               "REFERENCES keywords (id) " \
               "ON UPDATE SET NULL ON DELETE NO ACTION)"
@@ -53,3 +55,33 @@ def search_if_db_empty(db):
         result = [r for r in cursor.fetchall()]
     if not result:  # check if result return a None or a full object
         print(0)
+
+
+def drop_table(db, table_name):
+    with DatabaseConnections(f"{db}.db") as connection:
+        cursor = connection.cursor()
+        sql = f"DROP TABLE IF EXISTS {table_name}"
+        cursor.execute(sql)
+
+
+def delete_database(db):
+    os.remove(db+'.db')
+
+
+def search_keyword(db, keyword):
+    with DatabaseConnections(f"{db}.db") as connection:
+        cursor = connection.cursor()
+        sql = f"SELECT word, count, significance FROM keywords " \
+              f"WHERE word = ?"
+        cursor.execute(sql, (keyword,))
+        result = [r for r in cursor.fetchall()]
+        return result
+
+
+def search_all_words(db):
+    with DatabaseConnections(f"{db}.db") as connection:
+        cursor = connection.cursor()
+        sql = "SELECT word, count, significance FROM keywords"
+        cursor.execute(sql)
+        result = [row for row in cursor.fetchall()]
+        return result

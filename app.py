@@ -3,20 +3,19 @@ from database.database_manipulation import *
 from robot.robot import RobotFileChecker
 
 
+OBJECTIVES = "Scrape a website, get the words contained and classify them by significance."
 DB_PROJECT_NAME = 'Enter a name for your Database: '
-ASK_URL = "Enter a url or '0' to stop: "
+ASK_URL = "Enter a url or : "
 ASK_USER_NAME = "Enter your name: "
-running = True
-USER_CHOISES = """(a) Select to enter your name 
-(b) Show the objective of the program 
+USER_CHOISES = """Options:
+(a) Select to enter your name 
+(b) Enter a url of a website to scrape or website content
 (c) A keyword (can be numbers, letters, or both. NOT case sensitive) 
-(d) execute your choice: """
-
-
-def prompt_db_name():
-    global DB_PROJECT_NAME
-    result = input(DB_PROJECT_NAME).strip(' ')
-    return result
+(d) Enter to show objectives of the website.
+(f) Print all words from the page
+(q) Type q to quit
+Please select an option: """
+running = True
 
 
 def prompt_user_name():
@@ -26,53 +25,70 @@ def prompt_user_name():
 
 
 def prompt_user_url():
-    global ASK_URL
-    result = input(ASK_URL)
-    return result
+    global ASK_URL, DB_PROJECT_NAME
+    url = input(ASK_URL)
+    page = WebPage(url)
+    try:
+        add_to_webpages(DB_PROJECT_NAME, url, page.grab_title)
+        for word, count, significance in page.words_count_significance:
+            add_to_keywords(DB_PROJECT_NAME, 1, word, count, significance)
+    except AttributeError:
+        print("You have to enter a valid website url!")
 
 
-def program_objectives(objectives):
-    print(objectives)
+def program_objectives():
+    global OBJECTIVES
+    return OBJECTIVES
 
 
 def prompt_keyword():
-    pass
+    keyword = input("Please enter 1 keyword to check if it is on the website: ")
+    return search_keyword(DB_PROJECT_NAME, keyword)
 
 
-def execute_btm():
-    pass
+def all_words():
+    return search_all_words(DB_PROJECT_NAME)
 
 
 user_choices = {
     'a': prompt_user_name,
-    'b': program_objectives,
+    'b': prompt_user_url,
     'c': prompt_keyword,
-    'd': execute_btm
+    'd': program_objectives,
+    'f': all_words,
 
 }
 
 
 def menu():
-    while user_input != '0':
-        user_input = input(USER_CHOISES)
+    user_input = input(USER_CHOISES)
+    if user_input != 'q':
         if user_input in user_choices.keys():
-            user_choices[user_input]()
+            print(user_choices[user_input]())
         else:
             print('Please choose a valid command.')
-        user_input = input(USER_CHOISES)
+        menu()
     else:
         global running
-        running = False
+        running = 'q'
+        return running
 
 
-if __name__ == "__main__" and running:
-    DB_PROJECT_NAME = 'x'  # TODO 01.prompt_db_name()
+def prompt_database_name():
+    global DB_PROJECT_NAME
+    DB_PROJECT_NAME = input(DB_PROJECT_NAME)
+    try: delete_database(DB_PROJECT_NAME)
+    except FileNotFoundError: pass
     create_table_webpages_if_not_exist(DB_PROJECT_NAME)
     create_table_keywords_if_not_exist(DB_PROJECT_NAME)
-    search_if_db_empty(DB_PROJECT_NAME)
-    promped_url = 'https://books.toscrape.com/'  # prompt_user_url()
-    current_page = WebPage(promped_url)  # TODO 02. replace url with prompt_url
-    url_title = WebPage.grab_title
-    roboCheck = RobotFileChecker(promped_url)
-    print(roboCheck.check_fetch_page)
+
+
+if __name__ == "__main__":
+    prompt_database_name()
+
+    if running != 'q':
+        menu()
+    else:
+        print("Thank you for using the program.")
+
 
