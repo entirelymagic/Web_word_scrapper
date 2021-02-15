@@ -2,7 +2,6 @@ from parsers.all_content_of_a_page import WebPage
 from database.database_manipulation import *
 from robot.robot import RobotFileChecker
 
-
 OBJECTIVES = "Scrape a website, get the words contained and classify them by significance."
 DB_PROJECT_NAME = 'Enter a name for your Database: '
 ASK_URL = "Enter a url or : "
@@ -34,10 +33,11 @@ def prompt_user_url():
             add_to_webpages(DB_PROJECT_NAME, url, page.grab_title)
             for word, count, significance in page.words_count_significance:
                 add_to_keywords(DB_PROJECT_NAME, 1, word, count, significance)
+            return 'The Website was successfully scrapped! \n'
         except AttributeError:
-            print("You have to enter a valid website url!")
+            return "You have to enter a valid website url! \n"
     else:
-        print("Website not allowed to scrape")
+        return "Website not allowed to scrape \n"
 
 
 def program_objectives():
@@ -68,7 +68,7 @@ def menu():
     user_input = input(USER_CHOISES)
     if user_input != 'q':
         if user_input in user_choices.keys():
-            print(user_choices[user_input]())
+            print(user_choices[user_input]()) if not None else user_choices[user_input]()
         else:
             print('Please choose a valid command.')
         menu()
@@ -81,8 +81,10 @@ def menu():
 def prompt_database_name():
     global DB_PROJECT_NAME
     DB_PROJECT_NAME = input(DB_PROJECT_NAME)
-    try: delete_database(DB_PROJECT_NAME)
-    except FileNotFoundError: pass
+    try:
+        delete_database(DB_PROJECT_NAME)
+    except FileNotFoundError:
+        pass
     create_table_webpages_if_not_exist(DB_PROJECT_NAME)
     create_table_keywords_if_not_exist(DB_PROJECT_NAME)
 
@@ -94,5 +96,3 @@ if __name__ == "__main__":
         menu()
     else:
         print("Thank you for using the program.")
-
-
