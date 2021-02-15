@@ -3,7 +3,7 @@
 
 > Can list the words from the website and how many times they are used and by significance.
 
-## Development setup
+## How to use the app
 
 1. Select a name for a database to be used as cache for future queries.
 
